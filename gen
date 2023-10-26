@@ -1,0 +1,81 @@
+using Microsoft.Playwright;
+using System;
+using System.Threading.Tasks;
+
+class Program
+{
+    public static async Task Main()
+    {
+        using var playwright = await Playwright.CreateAsync();
+        await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        {
+            Headless = false,
+        });
+        var context = await browser.NewContextAsync();
+
+        var page = await context.NewPageAsync();
+
+        await page.Locator("body").ClickAsync();
+
+        await page.GotoAsync("https://the-internet.herokuapp.com/");
+
+        await page.GetByRole(AriaRole.Link, new() { Name = "Checkboxes" }).ClickAsync();
+
+        await page.GetByRole(AriaRole.Checkbox).Nth(1).UncheckAsync();
+
+        await page.GetByRole(AriaRole.Checkbox).First.CheckAsync();
+
+        await page.GetByRole(AriaRole.Link, new() { Name = "Dropdown" }).ClickAsync();
+
+        await page.Locator("#dropdown").SelectOptionAsync(new[] { "1" });
+
+        await page.Locator("#dropdown").SelectOptionAsync(new[] { "2" });
+
+        var isChecked = await page.GetByRole(AriaRole.Checkbox).First.IsCheckedAsync();
+        
+
+    }
+}
+
+
+using Microsoft.Playwright;
+using System;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+
+class Program
+{
+    public static async Task Main()
+    {
+        using var playwright = await Playwright.CreateAsync();
+        await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        {
+            Headless = false,
+        });
+        var context = await browser.NewContextAsync();
+
+        var page = await context.NewPageAsync();
+
+        await page.GotoAsync("https://the-internet.herokuapp.com/");
+
+        await page.GetByRole(AriaRole.Link, new() { Name = "Checkboxes" }).ClickAsync();
+
+        await page.GetByRole(AriaRole.Checkbox).Nth(1).UncheckAsync();
+
+        await page.GetByRole(AriaRole.Checkbox).First.CheckAsync();
+
+
+
+        var isChecked= await page.GetByRole(AriaRole.Checkbox).First.IsCheckedAsync();
+        if(isChecked)
+        {
+            Console.WriteLine("Checked first checkbox");
+        }
+        else
+        {
+            Console.WriteLine("first checkbox not checked");
+        }
+        
+    }
+}
+
