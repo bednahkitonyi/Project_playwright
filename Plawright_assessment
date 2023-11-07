@@ -1,0 +1,54 @@
+using Microsoft.Playwright;
+using NUnit.Framework;
+using System;
+using System.Threading.Tasks;
+
+namespace LoginAutomationScript
+{
+class Program
+{
+    public static async Task Main()
+    {
+        // launching chromium browser in headed mode 
+        using var playwright = await Playwright.CreateAsync();
+        await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        {
+            Headless = false,
+        });
+        var context = await browser.NewContextAsync();
+        var page = await context.NewPageAsync();
+
+        // naving to the site url
+
+        await page.GotoAsync("https://www.ke.sportpesa.com/en/sports-betting/football-1/");
+        await page.WaitForLoadStateAsync(LoadState.Load);
+
+        // entering credentials for login
+        await page.GetByPlaceholder("Mobile").ClickAsync();
+
+        await page.GetByPlaceholder("Mobile").FillAsync("0727523766");
+        await Task.Delay(3000);
+
+        await page.GetByPlaceholder("Password").ClickAsync();
+        await Task.Delay(1000);
+        
+        await page.GetByPlaceholder("Password").FillAsync("Gunners2021%");
+        await Task.Delay(2000);
+
+        await page.GetByRole(AriaRole.Button, new() { Name = "Login" }).ClickAsync();
+        await Task.Delay(10000);
+
+        //asserting that logout button is available after loging
+        
+       var logoutBtn = page.GetByRole(AriaRole.Link, new() { Name = "Logout" });
+
+       Assert.That(logoutBtn, Is.Not.Null ,"The logout button should be present after a successful login");
+
+       await Task.Delay(2000);
+       await context.CloseAsync();
+       await browser.CloseAsync();
+
+
+    }
+ }
+}
